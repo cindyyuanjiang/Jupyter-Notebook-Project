@@ -5,7 +5,7 @@
 
 You will need to install [this library](https://github.com/andrewhead/python-program-analysis/) and modify the relative path to that library in `cell_utils.js`
 
-## Note that part of the files 'analyze_notebooks.js', 'cell_utils.js', 'cell_deps.js', 'graph_visual-4.py' are modified upon the github repository 'https://github.com/jerry-lu/python-examples'
+## Note that part of the files 'analyze_notebooks.js', 'cell_utils.js', 'cell_deps.js', 'graph_visual-4.py' are modified upon the github repository 'https://github.com/jerry-lu/cell-dependencies'
 
 ## How to execute
 
