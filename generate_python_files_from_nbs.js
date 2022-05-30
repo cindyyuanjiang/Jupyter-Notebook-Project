@@ -1,7 +1,7 @@
-var dep = require("./cell_deps.js");
+// var dep = require("./cell_deps.js");
 var line_dep = require("./line_deps.js");
-var sk = require("./extract_sk_stmts.js");
-var counting = require("./count_labels.js");
+// var sk = require("./extract_sk_stmts.js");
+// var counting = require("./count_labels.js");
 var fs = require('fs');
 
 const args = process.argv.slice(2);

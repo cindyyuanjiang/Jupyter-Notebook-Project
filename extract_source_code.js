@@ -29,9 +29,9 @@ for (let cell of programJson.cells) {
             }
         }
         if (sourceCode != ""){
-            res += "#" + cell.execution_count + ":";
+            res += "##" + cell.execution_count + "@@";
             res += sourceCode;
-            res += "\n";
+            // res += "\n";
         }
     }
 }
