@@ -64,6 +64,15 @@ def construct_map(content):
     return result
 
 
+def construct_labeling_map(content):
+    content = content.split("\n")
+    result = dict()
+    for item in content[:-1]:
+        splitted = item.split(" : ")
+        result[int(splitted[0])] = splitted[1]
+    return result
+
+
 # test function for Levenshtein distance
 def test_edit_distance():
     assert(edit_distance("", "a") == 1)
@@ -98,15 +107,23 @@ if __name__ == "__main__":
 
     file_1 = sys.argv[1]
     file_2 = sys.argv[2]
-    threshold = float(sys.argv[3])
+    file_1_labelings = sys.argv[3]
+    file_2_labelings = sys.argv[4]
+    threshold = float(sys.argv[5])
 
     file_1 = open(file_1, "r")
     file_2 = open(file_2, "r")
+    file_1_labelings = open(file_1_labelings, "r")
+    file_2_labelings = open(file_2_labelings, "r")
     content_1 = file_1.read()
     content_2 = file_2.read()
+    labels_1 = file_1_labelings.read()
+    labels_2 = file_2_labelings.read()
 
     map_1 = construct_map(content_1)
     map_2 = construct_map(content_2)
+    labelings_1 = construct_labeling_map(labels_1)
+    labelings_2 = construct_labeling_map(labels_2)
 
     pq = PriorityQueue()
     for k1 in map_1:
@@ -127,11 +144,25 @@ if __name__ == "__main__":
         # len 1 = len 2 = 100, distance = 10
         # which pair should be removed first?
         if (node.id1 in set_1) and (node.id2 in set_2) and node.distance < threshold * min(node.len1, node.len2):
-            print("id 1 = {}, id 2 = {}, dist = {}".format(node.id1, node.id2, node.distance))
             set_1.remove(node.id1)
             set_2.remove(node.id2)
-            connection[node.id1] = node.id2
+            connection[node.id1] = (node.id2, node.distance)
 
-    print("set 1 left with = {}".format(set_1))
-    print("set 2 left with = {}".format(set_2))
+    print("Cell that have NOT been changed:")
+    for k in connection:
+        if connection[k][1] == 0:
+            if labelings_1[k] == labelings_2[connection[k][0]]:
+                print("{} -> {} : {}".format(k, connection[k][0], labelings_1[k]))
+            else:
+                print("{} -> {} : {} -> {}".format(k, connection[k], labelings_1[k], labelings_2[connection[k][0]]))
 
+    print("\nCell that have been changed:")
+    for k in connection:
+        if connection[k][1] > 0:
+            if labelings_1[k] == labelings_2[connection[k][0]]:
+                print("{} -> {} : {}, distance = {}".format(k, connection[k][0], labelings_1[k], connection[k][1]))
+            else:
+                print("{} -> {} : {} -> {}, distance = {}".format(k, connection[k][0], labelings_1[k], labelings_2[connection[k][0]], connection[k][1]))
+
+    print("\nCells that have been removed: {}".format(set_1))
+    print("\nCells that have been added: {}".format(set_2))
