@@ -101,25 +101,8 @@ def test_pq():
     assert(pq.pop().distance == 5)
 
 
-if __name__ == "__main__":
-    test_edit_distance()
-    test_pq()
-
-    file_1 = sys.argv[1]
-    file_2 = sys.argv[2]
-    file_1_labelings = sys.argv[3]
-    file_2_labelings = sys.argv[4]
-    threshold = float(sys.argv[5])
-
-    file_1 = open(file_1, "r")
-    file_2 = open(file_2, "r")
-    file_1_labelings = open(file_1_labelings, "r")
-    file_2_labelings = open(file_2_labelings, "r")
-    content_1 = file_1.read()
-    content_2 = file_2.read()
-    labels_1 = file_1_labelings.read()
-    labels_2 = file_2_labelings.read()
-
+def greedy_approach(content_1, content_2, labels_1, labels_2, threshold):
+    # int to string
     map_1 = construct_map(content_1)
     map_2 = construct_map(content_2)
     labelings_1 = construct_labeling_map(labels_1)
@@ -166,3 +149,152 @@ if __name__ == "__main__":
 
     print("\nCells that have been removed: {}".format(set_1))
     print("\nCells that have been added: {}".format(set_2))
+    return
+
+
+def construct_list(content):
+    content = content.split("##")
+    result = []
+    for item in content[1:]:
+        splitted = item.split("@@")
+        result.append([int(splitted[0]), splitted[1]])
+    return result
+
+
+def alignment_total_number_of_matches(content_list_1, content_list_2, threshold):
+    n = len(content_list_1)
+    m = len(content_list_2)
+    distances = [[0 for i in range(m)] for j in range(n)]
+    for i in range(n):
+        for j in range(m):
+            s1 = content_list_1[i][1]
+            s2 = content_list_2[j][1]
+            distances[i][j] = edit_distance(s1, s2)
+    dp = [[0 for i in range(m + 1)] for j in range(n + 1)]
+    back_track = [[0 for i in range(m + 1)] for j in range(n + 1)]
+    connection = dict()
+    for i in range(1, n+1):
+        for j in range(1, m+1):
+            s1 = content_list_1[i-1][1]
+            s2 = content_list_2[j-1][1]
+            # dist = edit_distance(s1, s2)
+            # if dist < threshold * min(len(s1), len(s2)):
+            if distances[i-1][j-1] < threshold * min(len(s1), len(s2)):
+                # found a match
+                v1 = dp[i-1][j-1] + 1
+            else:
+                v1 = dp[i-1][j-1]
+            v2 = dp[i-1][j]
+            v3 = dp[i][j-1]
+            cur_max = max(max(v1, v2), v3)
+            if v1 == cur_max:
+                back_track[i][j] = 0
+            elif v2 == cur_max:
+                back_track[i][j] = 1
+            else:
+                back_track[i][j] = 2
+            dp[i][j] = cur_max
+    i = n
+    j = m
+    while i > 0 and j > 0:
+        if back_track[i][j] == 0:
+            if dp[i][j] == dp[i-1][j-1] + 1:
+                # s1 = content_list_1[i-1][1]
+                # s2 = content_list_2[j-1][1]
+                # dist = edit_distance(s1, s2)
+                # connection[content_list_1[i-1][0]] = [content_list_2[j-1][0], dist]
+                connection[content_list_1[i-1][0]] = [content_list_2[j-1][0], distances[i-1][j-1]]
+            i -= 1
+            j -= 1
+        elif back_track[i][j] == 1:
+            i -= 1
+        else:
+            j -= 1
+
+    return dp, back_track, connection
+
+
+def alignment_sum_of_distance(content_list_1, content_list_2, threshold):
+    n = len(content_list_1)
+    m = len(content_list_2)
+    distances = [[0 for i in range(m)] for j in range(n)]
+    for i in range(n):
+        for j in range(m):
+            s1 = content_list_1[i][1]
+            s2 = content_list_2[j][1]
+            distances[i][j] = edit_distance(s1, s2)
+    dp = [[0 for i in range(m + 1)] for j in range(n + 1)]
+    back_track = [[0 for i in range(m + 1)] for j in range(n + 1)]
+    connection = dict()
+    for i in range(1, n+1):
+        for j in range(1, m+1):
+            s1 = content_list_1[i-1][1]
+            s2 = content_list_2[j-1][1]
+            # dist = edit_distance(s1, s2)
+            if distances[i-1][j-1] < threshold * min(len(s1), len(s2)):
+                # found a match
+                v1 = dp[i-1][j-1] + distances[i-1][j-1]
+            else:
+                v1 = dp[i-1][j-1] + max(len(s1), len(s2))
+            v2 = dp[i-1][j] + len(s1)
+            v3 = dp[i][j-1] + len(s2)
+            cur_max = min(min(v1, v2), v3)
+            if v1 == cur_max:
+                back_track[i][j] = 0
+            elif v2 == cur_max:
+                back_track[i][j] = 1
+            else:
+                back_track[i][j] = 2
+            dp[i][j] = cur_max
+    i = n
+    j = m
+    while i > 0 and j > 0:
+        if back_track[i][j] == 0:
+            # s1 = content_list_1[i-1][1]
+            # s2 = content_list_2[j-1][1]
+            # dist = edit_distance(s1, s2)
+            if dp[i][j] == dp[i-1][j-1] + distances[i-1][j-1]:
+                # connection[content_list_1[i-1][0]] = [content_list_2[j-1][0], dist]
+                connection[content_list_1[i-1][0]] = [content_list_2[j-1][0], distances[i-1][j-1]]
+            i -= 1
+            j -= 1
+        elif back_track[i][j] == 1:
+            i -= 1
+        else:
+            j -= 1
+
+    return dp, back_track, connection
+
+
+def alignment_approach(content_1, content_2, threshold):
+    content_list_1 = construct_list(content_1)
+    content_list_2 = construct_list(content_2)
+    # dp, back_track, connection = alignment_total_number_of_matches(content_list_1, content_list_2, threshold)
+    dp, back_track, connection = alignment_sum_of_distance(content_list_1, content_list_2, threshold)
+    for k in list(connection.keys())[::-1]:
+        print("cell {} : cell {}, distance = {}".format(k, connection[k][0],connection[k][1]))
+    return
+
+
+if __name__ == "__main__":
+    test_edit_distance()
+    test_pq()
+
+    file_1 = sys.argv[1]
+    file_2 = sys.argv[2]
+    file_1_labelings = sys.argv[3]
+    file_2_labelings = sys.argv[4]
+    threshold = float(sys.argv[5])
+
+    file_1 = open(file_1, "r")
+    file_2 = open(file_2, "r")
+    file_1_labelings = open(file_1_labelings, "r")
+    file_2_labelings = open(file_2_labelings, "r")
+    content_1 = file_1.read()
+    content_2 = file_2.read()
+    labels_1 = file_1_labelings.read()
+    labels_2 = file_2_labelings.read()
+
+    # greedy_approach(content_1, content_2, labels_1, labels_2, threshold)
+    alignment_approach(content_1, content_2, threshold)
+
