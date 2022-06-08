@@ -24,7 +24,6 @@ fs.readdirSync(path).forEach(file => {
         const programJson = JSON.parse(programSrc);
 
         if (programJson.cells == undefined) {
-            // var new_name = '.' + name.split('.')[1];
             var new_name = name.substring(0, name.lastIndexOf('.'));
             fs.writeFile(new_name + '.py', "", function (err) {
               if (err) throw err;
@@ -49,7 +48,6 @@ fs.readdirSync(path).forEach(file => {
             }
         }
         if (notebookCode != "") {
-            // var new_name = '.' + name.split('.')[1];
             var new_name = name.substring(0, name.lastIndexOf('.'));
             fs.writeFile(new_name + '_no_comments.py', notebookCode, function (err) {
               if (err) throw err;

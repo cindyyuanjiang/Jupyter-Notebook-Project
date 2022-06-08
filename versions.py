@@ -1,4 +1,6 @@
 import sys
+from graph_prop_labels import *
+from collections import defaultdict
 
 # min heap implementation adopted from 15780 course work
 from heapq import heappush, heappop
@@ -266,28 +268,137 @@ def alignment_sum_of_distance(content_list_1, content_list_2, threshold):
     return dp, back_track, connection
 
 
-def alignment_approach(content_1, content_2, threshold):
+def alignment_approach(content_1, content_2, labels_1, labels_2, threshold):
     content_list_1 = construct_list(content_1)
     content_list_2 = construct_list(content_2)
+    labelings_1 = construct_labeling_map(labels_1)
+    labelings_2 = construct_labeling_map(labels_2)
+    analysis = ""
+
+    # Approach 1
     # dp, back_track, connection = alignment_total_number_of_matches(content_list_1, content_list_2, threshold)
+
+    # Approach 2
     dp, back_track, connection = alignment_sum_of_distance(content_list_1, content_list_2, threshold)
-    for k in list(connection.keys())[::-1]:
-        print("cell {} : cell {}, distance = {}".format(k, connection[k][0],connection[k][1]))
-    return
+    # for k in list(connection.keys())[::-1]:
+    #     print("cell {} : cell {}, distance = {}".format(k, connection[k][0],connection[k][1]))
+
+    set_1 = set(labelings_1.keys())
+    set_2 = set(labelings_2.keys())
+
+    unchanged = defaultdict(list)
+    changed = defaultdict(list)
+
+    for k in connection:
+        set_1.remove(k)
+        set_2.remove(connection[k][0])
+        # unchaged
+        if connection[k][1] == 0:
+            unchanged[labelings_1[k]].append(k)
+        else:
+            changed[labelings_1[k]].append(k)
+
+    analysis += "\nCells that have NOT been changed (distance = 0):\n"
+    for label in unchanged:
+        analysis += "[{}] {} cells:\n".format(len(unchanged[label]), label)
+        for k in unchanged[label]:
+            if labelings_1[k] == labelings_2[connection[k][0]]:
+                analysis += "{} -> {} : {}\n".format(k, connection[k][0], labelings_1[k])
+            else:
+                analysis += "{} -> {} : {} -> {}\n".format(k, connection[k], labelings_1[k], labelings_2[connection[k][0]])
+        analysis += "\n"
+
+    analysis += "\nCell that have been changed:\n"
+    for label in changed:
+        analysis += "[{}] {} cells:\n".format(len(changed[label]), label)
+        for k in changed[label]:
+            if labelings_1[k] == labelings_2[connection[k][0]]:
+                analysis += "{} -> {} : {}, distance = {}\n".format(k, connection[k][0], labelings_1[k], connection[k][1])
+
+            else:
+                analysis += "{} -> {} : {} -> {}, distance = {}\n".format(k, connection[k][0], labelings_1[k], labelings_2[connection[k][0]], connection[k][1])
+        analysis += "\n"
+
+    added = defaultdict(list)
+    for cell in set_2:
+        added[labelings_2[cell]].append(cell)
+
+    analysis += "\nCells that have been added:\n"
+    for label in added:
+        analysis += "[{}] {} cells:\n".format(len(added[label]), label)
+        analysis += "{}\n".format(added[label])
+
+    removed = defaultdict(list)
+    for cell in set_1:
+        removed[labelings_1[cell]].append(cell)
+
+    analysis += "\nCells that have been removed:\n"
+    for label in removed:
+        analysis += "[{}] {} cells:\n".format(len(removed[label]), label)
+        analysis += "{}\n".format(removed[label])
+
+    # print("\nCell that have NOT been changed:")
+    # for k in connection:
+    #     set_1.remove(k)
+    #     set_2.remove(connection[k][0])
+    #     if connection[k][1] == 0:
+    #         if labelings_1[k] == labelings_2[connection[k][0]]:
+    #             print("{} -> {} : {}".format(k, connection[k][0], labelings_1[k]))
+    #         else:
+    #             print("{} -> {} : {} -> {}".format(k, connection[k], labelings_1[k], labelings_2[connection[k][0]]))
+
+    # print("\nCell that have been changed:")
+    # changed = set()
+    # for k in connection:
+    #     if connection[k][1] > 0:
+    #         changed.add(connection[k][0])
+    #         if labelings_1[k] == labelings_2[connection[k][0]]:
+    #             print("{} -> {} : {}, distance = {}".format(k, connection[k][0], labelings_1[k], connection[k][1]))
+
+    #         else:
+    #             print("{} -> {} : {} -> {}, distance = {}".format(k, connection[k][0], labelings_1[k], labelings_2[connection[k][0]], connection[k][1]))
+
+    # print("\nCells that have been added: {}".format(set_2))
+    # print("\nCells that have been removed: {}".format(set_1))
+
+    return changed, set_2, labelings_2, analysis
+
+
+def analyze(file_1_name, file_2_name, file_1_labelings, file_2_labelings, threshold):
+    file_1 = open(file_1_name, "r")
+    file_2 = open(file_2_name, "r")
+    file_1_labelings = open(file_1_labelings, "r")
+    file_2_labelings = open(file_2_labelings, "r")
+    content_1 = file_1.read()
+    content_2 = file_2.read()
+    labels_1 = file_1_labelings.read()
+    labels_2 = file_2_labelings.read()
+
+    changed, added, final_labels, analysis = alignment_approach(content_1, content_2, labels_1, labels_2, threshold)
+
+    file_2_name = str(file_2_name)
+    # print(file_2_name + "\n\n")
+    labels_filename = file_2_name[:file_2_name.rfind(".")][:-12] + "_new_labels.txt"
+    # print(changed)
+    # print(added)
+    graph_versions(labels_filename, changed, added, final_labels)
+
+    return analysis
 
 
 if __name__ == "__main__":
     test_edit_distance()
     test_pq()
 
-    file_1 = sys.argv[1]
-    file_2 = sys.argv[2]
+    file_1_name = sys.argv[1]
+    file_2_name = sys.argv[2]
     file_1_labelings = sys.argv[3]
     file_2_labelings = sys.argv[4]
     threshold = float(sys.argv[5])
+    # threshold = 0.5
 
-    file_1 = open(file_1, "r")
-    file_2 = open(file_2, "r")
+    file_1 = open(file_1_name, "r")
+    file_2 = open(file_2_name, "r")
     file_1_labelings = open(file_1_labelings, "r")
     file_2_labelings = open(file_2_labelings, "r")
     content_1 = file_1.read()
@@ -296,5 +407,14 @@ if __name__ == "__main__":
     labels_2 = file_2_labelings.read()
 
     # greedy_approach(content_1, content_2, labels_1, labels_2, threshold)
-    alignment_approach(content_1, content_2, threshold)
+    changed, added, final_labels = alignment_approach(content_1, content_2, labels_1, labels_2, threshold)
+
+    file_2_name = str(file_2_name)
+    print(file_2_name + "\n\n")
+    labels_filename = file_2_name[:file_2_name.rfind(".")][:-12] + "_new_labels.txt"
+    print("before graph")
+    print(changed)
+    print(added)
+    graph_versions(labels_filename, changed, added, final_labels)
+    print("after graph")
 

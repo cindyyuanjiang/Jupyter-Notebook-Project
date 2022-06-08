@@ -473,4 +473,75 @@ def f(filename):
     return num_pair_of_parallel_training_processes_common_data_collection, num_pair_of_parallel_training_processes_no_common_data_collection, num_eval, deadends
 
 
+def graph_versions(filename, changed, added, labels):
+    # print(changed)
 
+    label_to_color_map = {"training+evaluation":"yellow", "training":"purple", "evaluation":"orange", "collection":"red", "wrangling":"green", "exploration":"lightblue", "n/a":"lightgrey"}
+    cell_color_map = dict()
+    for k in labels:
+        cell_color_map[k] = label_to_color_map[labels[k]]
+
+    name = filename
+    new_name = name[:name.rfind(".")] + "_version_change.gv"
+
+    g = Digraph('G', filename=new_name)
+    f = open(name, "r")
+
+    deps = []
+    for line in f:
+        deps.append(line)
+    cell_count = int(deps[0])
+    deps_count = int(deps[1 + cell_count])
+
+    cell_to_lines = defaultdict(list)
+    line_to_cell = defaultdict(int)
+    for i in range(1, 1 + cell_count):
+        line = deps[i]
+        l = line.split("->")
+        l = list(map(str.strip, l))
+        if (len(l[1]) == 0):
+            cell_to_lines[int(l[0])] = []
+            continue
+        lines = list(map(int, l[1].split(',')))
+        cell_to_lines[int(l[0])] = lines
+        for line in lines:
+            line_to_cell[line] = int(l[0])
+    
+    cell_dep = defaultdict(set)
+    # cell_parent = defaultdict(set)
+
+    for i in range(1 + cell_count + 1, 1 + cell_count + 1 + deps_count):
+        line = deps[i]
+        l = line.split("->")
+        l = list(map(str.strip, l))
+        # dep_graph[int(l[0])].add(int(l[1]))
+        # parent_graph[int(l[1])].add(int(l[0]))
+
+        cell_dep[line_to_cell[int(l[0])]].add(line_to_cell[int(l[1])])
+        # cell_parent[line_to_cell[int(l[1])]].add(line_to_cell[int(l[0])])
+
+    for cell in cell_to_lines:
+        if cell in cell_color_map:
+            if cell in changed:
+                print(cell)
+                g.node(str(cell), shape = 'doublecircle', style = 'filled', color = cell_color_map[cell])
+            elif cell in added:
+                g.node(str(cell), shape = 'diamond', style = 'filled', color = cell_color_map[cell])
+            else:    
+                g.node(str(cell), shape = 'circle', style = 'filled', color = cell_color_map[cell])
+        for child in cell_dep[cell]:
+            if child in cell_color_map:
+                if child == cell:
+                    continue
+                if cell in changed:
+                    print(cell)
+                    g.node(str(child), shape = 'doublecircle', style = 'filled', color = cell_color_map[child])
+                elif cell in added:
+                    g.node(str(child), shape = 'diamond', style = 'filled', color = cell_color_map[child])
+                else:    
+                    g.node(str(child), shape = 'circle', style = 'filled', color = cell_color_map[child])
+                # g.node(str(child), style = 'filled', color = cell_color_map[child])
+                g.edge(str(cell), str(child))
+
+    g.render(view = False)
+    return
