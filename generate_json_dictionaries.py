@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+from subprocess import call
 
 directory_in_str = sys.argv[1]
 directory = os.fsencode(directory_in_str)
@@ -15,7 +16,10 @@ for file in os.listdir(directory):
         print(directory_in_str)
         print(filename)
         print("\n\n\n")
-        os.system("/Users/cindyjiang/Desktop/pyright/packages/pyright/index.js --lib " + directory_in_str + filename)
+        filename = filename.replace(" ", "\ ")
+        command = "/Users/cindyjiang/Desktop/pyright/packages/pyright/index.js --lib " + directory_in_str + filename
+        os.system(command)
+        # call(command)
 
 print(num_python_files)
 print("time used = " + str(time.time() - start))

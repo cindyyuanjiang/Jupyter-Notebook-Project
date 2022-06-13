@@ -10,7 +10,7 @@ This file takes in a folder path in command line, and generates a python file fo
 
 **Generating type inference information from python files**
 
-generate_json_dictionaries.js
+generate_json_dictionaries.py
 
 This file takes in a folder path in command line, and generates the type inference information for each python file in the folder and saves the generated json file in the same folder.
 

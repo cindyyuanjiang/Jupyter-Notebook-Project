@@ -361,7 +361,12 @@ def alignment_approach(content_1, content_2, labels_1, labels_2, threshold):
     # print("\nCells that have been added: {}".format(set_2))
     # print("\nCells that have been removed: {}".format(set_1))
 
-    return changed, set_2, labelings_2, analysis
+    changed_cells = set()
+    for k in changed:
+        for cell in changed[k]:
+            changed_cells.add(cell)
+
+    return changed_cells, set_2, labelings_2, analysis, connection
 
 
 def analyze(file_1_name, file_2_name, file_1_labelings, file_2_labelings, threshold):
@@ -374,16 +379,16 @@ def analyze(file_1_name, file_2_name, file_1_labelings, file_2_labelings, thresh
     labels_1 = file_1_labelings.read()
     labels_2 = file_2_labelings.read()
 
-    changed, added, final_labels, analysis = alignment_approach(content_1, content_2, labels_1, labels_2, threshold)
+    changed, added, final_labels, analysis, connection = alignment_approach(content_1, content_2, labels_1, labels_2, threshold)
 
     file_2_name = str(file_2_name)
     # print(file_2_name + "\n\n")
     labels_filename = file_2_name[:file_2_name.rfind(".")][:-12] + "_new_labels.txt"
     # print(changed)
     # print(added)
-    graph_versions(labels_filename, changed, added, final_labels)
+    cell_deps = graph_versions(labels_filename, changed, added, final_labels)
 
-    return analysis
+    return analysis, connection, final_labels, cell_deps
 
 
 if __name__ == "__main__":

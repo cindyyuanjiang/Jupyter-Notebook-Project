@@ -473,6 +473,41 @@ def f(filename):
     return num_pair_of_parallel_training_processes_common_data_collection, num_pair_of_parallel_training_processes_no_common_data_collection, num_eval, deadends
 
 
+def generate_deps_cell_level(filename):
+    f = open(filename, "r")
+
+    deps = []
+    for line in f:
+        deps.append(line)
+    cell_count = int(deps[0])
+    deps_count = int(deps[1 + cell_count])
+
+    cell_to_lines = defaultdict(list)
+    line_to_cell = defaultdict(int)
+    for i in range(1, 1 + cell_count):
+        line = deps[i]
+        l = line.split("->")
+        l = list(map(str.strip, l))
+        if (len(l[1]) == 0):
+            cell_to_lines[int(l[0])] = []
+            continue
+        lines = list(map(int, l[1].split(',')))
+        cell_to_lines[int(l[0])] = lines
+        for line in lines:
+            line_to_cell[line] = int(l[0])
+    
+    cell_dep = defaultdict(set)
+    # cell_parent = defaultdict(set)
+
+    for i in range(1 + cell_count + 1, 1 + cell_count + 1 + deps_count):
+        line = deps[i]
+        l = line.split("->")
+        l = list(map(str.strip, l))
+        cell_dep[line_to_cell[int(l[0])]].add(line_to_cell[int(l[1])])
+
+    return cell_dep
+
+
 def graph_versions(filename, changed, added, labels):
     # print(changed)
 
@@ -544,4 +579,4 @@ def graph_versions(filename, changed, added, labels):
                 g.edge(str(cell), str(child))
 
     g.render(view = False)
-    return
+    return cell_dep
