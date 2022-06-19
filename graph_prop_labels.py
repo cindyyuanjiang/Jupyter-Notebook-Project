@@ -5,7 +5,7 @@ import networkx as nx
 import itertools
 import random
 
-def f(filename):
+def propagate_and_graph(filename):
     name = filename
     new_name = name[:name.rfind(".")] + ".gv"
 

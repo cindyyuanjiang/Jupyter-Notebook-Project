@@ -20,8 +20,6 @@ let res = "";
 
 for (let cell of programJson.cells) {
     if (cell.cell_type === 'code') {
-        // res += cell.execution_count + ":";
-        // res += cell.source;
         var sourceCode = "";
         for (let line of cell.source) {
             if (line[0] != '#' && line[0] != '%' && line[0] != '!' && line != "") {
@@ -31,7 +29,6 @@ for (let cell of programJson.cells) {
         if (sourceCode != ""){
             res += "##" + cell.execution_count + "@@";
             res += sourceCode;
-            // res += "\n";
         }
     }
 }

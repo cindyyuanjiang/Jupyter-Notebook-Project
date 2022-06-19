@@ -39,7 +39,7 @@ fs.readdirSync(path).forEach(file => {
             });
         } catch (err) {
             // comment out for measuring performance
-            // console.log("Error occured: " + err.message)
+            // console.log("Error occured: " + err.message);
             fs.writeFile(new_name + '_no_comments.py', "", function (err) {
               if (err) throw err;
             });
