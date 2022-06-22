@@ -33,11 +33,11 @@ for file in os.listdir(directory):
     if filename.endswith(".ipynb"):
         num_notebooks_in_folder += 1
 
-print("num_files_with_parallel_training_common_data_collection = " + str(num_files_with_parallel_training_common_data_collection) + "\n")
-print("num_files_with_parallel_training_no_common_data_collection = " + str(num_files_with_parallel_training_no_common_data_collection) + "\n")
-print("num_files_with_evaluation_comparison = " + str(num_files_with_evaluation_comparison) + "\n")
-print("num_files_with_deadends = " + str(num_files_with_deadends) + "\n")
-print("num_files_processed = " + str(num_files_processed) + "\n")
-print("num_files_with_labels = " + str(num_files_with_labels) + "\n")
+print("num_files_with_parallel_training_common_data_collection = " + str(num_files_with_parallel_training_common_data_collection))
+print("num_files_with_parallel_training_no_common_data_collection = " + str(num_files_with_parallel_training_no_common_data_collection))
+print("num_files_with_evaluation_comparison = " + str(num_files_with_evaluation_comparison))
+print("num_files_with_deadends = " + str(num_files_with_deadends))
+print("num_files_processed = " + str(num_files_processed))
+print("num_files_with_labels = " + str(num_files_with_labels))
 print("num_notebooks_in_folder = " + str(num_notebooks_in_folder))
 print("\nTime used = " + str(time.time() - start))
