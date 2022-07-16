@@ -155,7 +155,7 @@ def greedy_approach(content_1, content_2, labels_1, labels_2, threshold):
 
 
 def construct_list(content):
-    content = content.split("##")
+    content = content.split("#?#?")
     result = []
     for item in content[1:]:
         splitted = item.split("@@")
@@ -179,8 +179,6 @@ def alignment_total_number_of_matches(content_list_1, content_list_2, threshold)
         for j in range(1, m+1):
             s1 = content_list_1[i-1][1]
             s2 = content_list_2[j-1][1]
-            # dist = edit_distance(s1, s2)
-            # if dist < threshold * min(len(s1), len(s2)):
             if distances[i-1][j-1] < threshold * min(len(s1), len(s2)):
                 # found a match
                 v1 = dp[i-1][j-1] + 1
@@ -201,10 +199,6 @@ def alignment_total_number_of_matches(content_list_1, content_list_2, threshold)
     while i > 0 and j > 0:
         if back_track[i][j] == 0:
             if dp[i][j] == dp[i-1][j-1] + 1:
-                # s1 = content_list_1[i-1][1]
-                # s2 = content_list_2[j-1][1]
-                # dist = edit_distance(s1, s2)
-                # connection[content_list_1[i-1][0]] = [content_list_2[j-1][0], dist]
                 connection[content_list_1[i-1][0]] = [content_list_2[j-1][0], distances[i-1][j-1]]
             i -= 1
             j -= 1
@@ -232,7 +226,6 @@ def alignment_sum_of_distance(content_list_1, content_list_2, threshold):
         for j in range(1, m+1):
             s1 = content_list_1[i-1][1]
             s2 = content_list_2[j-1][1]
-            # dist = edit_distance(s1, s2)
             if distances[i-1][j-1] < threshold * min(len(s1), len(s2)):
                 # found a match
                 v1 = dp[i-1][j-1] + distances[i-1][j-1]
@@ -252,11 +245,7 @@ def alignment_sum_of_distance(content_list_1, content_list_2, threshold):
     j = m
     while i > 0 and j > 0:
         if back_track[i][j] == 0:
-            # s1 = content_list_1[i-1][1]
-            # s2 = content_list_2[j-1][1]
-            # dist = edit_distance(s1, s2)
             if dp[i][j] == dp[i-1][j-1] + distances[i-1][j-1]:
-                # connection[content_list_1[i-1][0]] = [content_list_2[j-1][0], dist]
                 connection[content_list_1[i-1][0]] = [content_list_2[j-1][0], distances[i-1][j-1]]
             i -= 1
             j -= 1
@@ -279,26 +268,48 @@ def alignment_approach(content_1, content_2, labels_1, labels_2, threshold):
     # dp, back_track, connection = alignment_total_number_of_matches(content_list_1, content_list_2, threshold)
 
     # Approach 2
+    # Note: connection[k1] = [k2, distance], k1 = cell from V1 and k2 = cell from V2
     dp, back_track, connection = alignment_sum_of_distance(content_list_1, content_list_2, threshold)
+
+    # Print the information in connection
     # for k in list(connection.keys())[::-1]:
     #     print("cell {} : cell {}, distance = {}".format(k, connection[k][0],connection[k][1]))
 
-    set_1 = set(labelings_1.keys())
-    set_2 = set(labelings_2.keys())
+    # set_1 = set(labelings_1.keys())
+    # set_2 = set(labelings_2.keys())
+
+    set_1 = set()
+    set_2 = set()
+    for item in content_list_1:
+        set_1.add(item[0])
+        if not item[0] in labelings_1:
+            labelings_1[item[0]] = "n/a"
+    for item in content_list_2:
+        set_2.add(item[0])
+        if not item[0] in labelings_2:
+            labelings_2[item[0]] = "n/a"
+
+    # print(set_1)
+    # print(set_2)
+    # print(connection)
 
     unchanged = defaultdict(list)
     changed = defaultdict(list)
+    changed_cells = set()
 
     for k in connection:
+        # if k in set_1:
         set_1.remove(k)
+        # if connection[k][0] in set_2:
         set_2.remove(connection[k][0])
         # unchaged
-        if connection[k][1] == 0:
+        if connection[k][1] == 0 and labelings_1[k] == labelings_2[connection[k][0]]:
             unchanged[labelings_1[k]].append(k)
         else:
             changed[labelings_1[k]].append(k)
+            changed_cells.add(k)
 
-    analysis += "\nCells that have NOT been changed (distance = 0):\n"
+    analysis += "\nCells that have NOT been changed (distance = 0 and label remains the same):\n"
     for label in unchanged:
         analysis += "[{}] {} cells:\n".format(len(unchanged[label]), label)
         for k in unchanged[label]:
@@ -314,11 +325,13 @@ def alignment_approach(content_1, content_2, labels_1, labels_2, threshold):
         for k in changed[label]:
             if labelings_1[k] == labelings_2[connection[k][0]]:
                 analysis += "{} -> {} : {}, distance = {}\n".format(k, connection[k][0], labelings_1[k], connection[k][1])
-
+            elif connection[k][1] == 0:
+                analysis += "{} -> {} : {} -> {}\n".format(k, connection[k][0], labelings_1[k], labelings_2[connection[k][0]])
             else:
                 analysis += "{} -> {} : {} -> {}, distance = {}\n".format(k, connection[k][0], labelings_1[k], labelings_2[connection[k][0]], connection[k][1])
         analysis += "\n"
 
+    # mapping from label to cells
     added = defaultdict(list)
     for cell in set_2:
         added[labelings_2[cell]].append(cell)
@@ -328,6 +341,7 @@ def alignment_approach(content_1, content_2, labels_1, labels_2, threshold):
         analysis += "[{}] {} cells:\n".format(len(added[label]), label)
         analysis += "{}\n".format(added[label])
 
+    # mapping from label to cells
     removed = defaultdict(list)
     for cell in set_1:
         removed[labelings_1[cell]].append(cell)
@@ -337,36 +351,10 @@ def alignment_approach(content_1, content_2, labels_1, labels_2, threshold):
         analysis += "[{}] {} cells:\n".format(len(removed[label]), label)
         analysis += "{}\n".format(removed[label])
 
-    # print("\nCell that have NOT been changed:")
-    # for k in connection:
-    #     set_1.remove(k)
-    #     set_2.remove(connection[k][0])
-    #     if connection[k][1] == 0:
-    #         if labelings_1[k] == labelings_2[connection[k][0]]:
-    #             print("{} -> {} : {}".format(k, connection[k][0], labelings_1[k]))
-    #         else:
-    #             print("{} -> {} : {} -> {}".format(k, connection[k], labelings_1[k], labelings_2[connection[k][0]]))
-
-    # print("\nCell that have been changed:")
-    # changed = set()
-    # for k in connection:
-    #     if connection[k][1] > 0:
-    #         changed.add(connection[k][0])
-    #         if labelings_1[k] == labelings_2[connection[k][0]]:
-    #             print("{} -> {} : {}, distance = {}".format(k, connection[k][0], labelings_1[k], connection[k][1]))
-
-    #         else:
-    #             print("{} -> {} : {} -> {}, distance = {}".format(k, connection[k][0], labelings_1[k], labelings_2[connection[k][0]], connection[k][1]))
-
     # print("\nCells that have been added: {}".format(set_2))
     # print("\nCells that have been removed: {}".format(set_1))
 
-    changed_cells = set()
-    for k in changed:
-        for cell in changed[k]:
-            changed_cells.add(cell)
-
-    return changed_cells, set_2, labelings_2, analysis, connection
+    return changed_cells, labelings_2, analysis, connection, list(set_2), list(set_1)
 
 
 def analyze(file_1_name, file_2_name, file_1_labelings, file_2_labelings, threshold):
@@ -379,16 +367,14 @@ def analyze(file_1_name, file_2_name, file_1_labelings, file_2_labelings, thresh
     labels_1 = file_1_labelings.read()
     labels_2 = file_2_labelings.read()
 
-    changed, added, final_labels, analysis, connection = alignment_approach(content_1, content_2, labels_1, labels_2, threshold)
+    changed, final_labels, analysis, connection, added, removed = alignment_approach(content_1, content_2, labels_1, labels_2, threshold)
 
     file_2_name = str(file_2_name)
-    # print(file_2_name + "\n\n")
     labels_filename = file_2_name[:file_2_name.rfind(".")][:-12] + "_new_labels.txt"
-    # print(changed)
-    # print(added)
-    cell_deps = graph_versions(labels_filename, changed, added, final_labels)
+    # cell_deps = graph_versions(labels_filename, changed, added, final_labels)
+    cell_deps = generate_deps_cell_level(labels_filename)
 
-    return analysis, connection, final_labels, cell_deps
+    return analysis, connection, final_labels, cell_deps, added, removed
 
 
 if __name__ == "__main__":
@@ -400,7 +386,6 @@ if __name__ == "__main__":
     file_1_labelings = sys.argv[3]
     file_2_labelings = sys.argv[4]
     threshold = float(sys.argv[5])
-    # threshold = 0.5
 
     file_1 = open(file_1_name, "r")
     file_2 = open(file_2_name, "r")
@@ -412,7 +397,7 @@ if __name__ == "__main__":
     labels_2 = file_2_labelings.read()
 
     # greedy_approach(content_1, content_2, labels_1, labels_2, threshold)
-    changed, added, final_labels = alignment_approach(content_1, content_2, labels_1, labels_2, threshold)
+    changed, final_labels, analysis, connection, added, removed = alignment_approach(content_1, content_2, labels_1, labels_2, threshold)
 
     file_2_name = str(file_2_name)
     print(file_2_name + "\n\n")

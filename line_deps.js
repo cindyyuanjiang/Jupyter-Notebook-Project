@@ -175,13 +175,13 @@ module.exports = {
         let line_cfg_dep_btwn_cells = new Object();
         let line_to_lineNo = new Object();
         let cell_to_lines = new Object();
-        var last_exe_cnt = -1;
+        var last_exe_cnt = 0;
         // relabel cells with no execution counts
         for (let cell of programJson.cells) {
-            if (cell.execution_count == null) {
-                cell.execution_count = last_exe_cnt + 10;
+            if (cell.execution_count == null && cell.cell_type === 'code') {
+                cell.execution_count = last_exe_cnt + 1;
+                last_exe_cnt = cell.execution_count;
             }
-            last_exe_cnt = cell.execution_count;
         }
         var flag = false;
         var plt = "@@@@";
@@ -504,47 +504,6 @@ module.exports = {
         }
 
         flows = utils.getDefUse(notebookCode);
-        // for (let flow of flows.items) {
-        //     if (py.printNode(flow.toNode) != undefined && py.printNode(flow.toNode).includes('.fit')) {
-        //         let toNodeLineNo = flow.toNode.location.first_line;
-        //         let fromNodeLineNo = flow.fromNode.location.first_line;
-        //         if ((!(toNodeLineNo in map_from_line_to_label)) && fromNodeLineNo in map_from_line_to_label && map_from_line_to_label[fromNodeLineNo] == 'training') {
-        //             let trainingModel = find_model(py.printNode(flow.toNode));
-        //             if ((jsonFile.hasOwnProperty(trainingModel)) && supervised_learning_models.has(jsonFile[trainingModel][1])) {
-        //                 map_from_line_to_label[toNodeLineNo] = 'training';
-        //                 res_color_map += (toNodeLineNo + '->' + 'purple' + '\n');
-        //             }
-        //         }
-        //         if ((!(toNodeLineNo in map_from_line_to_label)) && fromNodeLineNo in map_from_line_to_label && map_from_line_to_label[fromNodeLineNo] == 'wrangling') {
-        //             let wranglingModel = find_model(py.printNode(flow.toNode));
-        //             if ((jsonFile.hasOwnProperty(wranglingModel)) && wrangling_models.has(jsonFile[wranglingModel][1])) {
-        //                 map_from_line_to_label[toNodeLineNo] = 'wrangling';
-        //                 res_color_map += (toNodeLineNo + '->' + 'green' + '\n');
-        //             }
-        //         }
-        //     } else if (py.printNode(flow.toNode) != undefined && (py.printNode(flow.toNode).includes('.predict') || py.printNode(flow.toNode).includes('.fit_predict'))) {
-        //         let toNodeLineNo = flow.toNode.location.first_line;
-        //         let fromNodeLineNo = flow.fromNode.location.first_line;
-        //         if (fromNodeLineNo in map_from_line_to_label && map_from_line_to_label[fromNodeLineNo] == 'training' && (!(toNodeLineNo in map_from_line_to_label))) {
-        //             map_from_line_to_label[toNodeLineNo] = 'evaluation';
-        //             res_color_map += (toNodeLineNo + '->' + 'orange' + '\n');
-        //         }
-        //     } else if (py.printNode(flow.toNode) != undefined && py.printNode(flow.toNode).includes('.score')) {
-        //         let toNodeLineNo = flow.toNode.location.first_line;
-        //         let fromNodeLineNo = flow.fromNode.location.first_line;
-        //         if (fromNodeLineNo in map_from_line_to_label && map_from_line_to_label[fromNodeLineNo] == 'training' && (!(toNodeLineNo in map_from_line_to_label))) {
-        //             map_from_line_to_label[toNodeLineNo] = 'evaluation';
-        //             res_color_map += (toNodeLineNo + '->' + 'orange' + '\n');
-        //         }
-        //     } else if (py.printNode(flow.toNode) != undefined && py.printNode(flow.toNode).includes('.decision_function')) {
-        //         let toNodeLineNo = flow.toNode.location.first_line;
-        //         let fromNodeLineNo = flow.fromNode.location.first_line;
-        //         if (fromNodeLineNo in map_from_line_to_label && map_from_line_to_label[fromNodeLineNo] == 'training' && (!(toNodeLineNo in map_from_line_to_label))) {
-        //             map_from_line_to_label[toNodeLineNo] = 'evaluation';
-        //             res_color_map += (toNodeLineNo + '->' + 'orange' + '\n');
-        //         }
-        //     }
-        // }
         let all_defs = new Set();
         let all_uses = new Set();
         for (let flow of flows.items) {

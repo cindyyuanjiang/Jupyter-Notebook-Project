@@ -1,8 +1,8 @@
 module.exports = {
-    // label is a function: string -> string
-    // input: one line of code
-    // returns its corresponding label based on the keyword it contains
-    label: function(line){
+    // label: string -> string
+    // input: line of code
+    // returns: its corresponding label based on the keyword it contains
+    label: function(line) {
         if(line.slice(0, 6) == "import") {
             return "";
         }
@@ -12,156 +12,151 @@ module.exports = {
         if (line == "" || line == "\n") {
             return "";
         }
-        if(line.includes("RandomizedSearchCV")){
+        if (line.includes("RandomizedSearchCV")) {
             return "training";
         }
-        if(line.includes("make_moons")){
+        if (line.includes("make_moons")) {
             return "data collection";
         }
-
         if (line.includes(".compile")) {
             return "training";
         }
-        if(line.includes("fetch_mldata")){
+        if (line.includes("fetch_mldata")) {
             return "data collection";
         }
-        if(line.includes("PCA")){
+        if (line.includes("PCA")) {
+            return "wrangling"; 
+        }
+        if (line.includes("NMF")) {
             return "wrangling";
         }
-        if(line.includes("NMF")){
-            return "wrangling";
-        }
-        if(line.includes(".predict_proba")){
+        if (line.includes(".predict_proba")) {
             return "evaluation";
         }
-        // if(line.includes(".fit_predict")){
-        //     return "evaluation";
-        // }
-        if(line.includes(".plot")){
+        if (line.includes(".plot")) {
             return "exploration";
         }
-        if(line.includes(".show")){
+        if (line.includes(".show")) {
             return "exploration";
         }
-        if(line.includes("best_params_")){
+        if (line.includes("best_params_")) {
             return "evaluation";
         }
-        if(line.includes("best_score_")){
+        if (line.includes("best_score_")) {
             return "evaluation";
         }
-        if(line.includes("grid_scores_")){
+        if (line.includes("grid_scores_")) {
             return "evaluation";
         }
-        if(line.includes("best_estimator_")){
+        if (line.includes("best_estimator_")) {
             return "evaluation";
         }
-        if(line.includes(".feature_importances_")){
+        if (line.includes(".feature_importances_")) {
             return "evaluation";
         }
-        if(line.includes(".subplot")){
+        if (line.includes(".subplot")) {
             return "exploration";
         }
-        if(line.includes(".histogram")){
+        if (line.includes(".histogram")) {
             return "exploration";
         }
-        if(line.includes(".matshow")){
+        if (line.includes(".matshow")) {
             return "exploration";
         }
-        if(line.includes(".imshow")){
+        if (line.includes(".imshow")) {
             return "exploration";
         }
-        if(line.includes(".contour")){
+        if (line.includes(".contour")) {
             return "exploration";
         }
-        if(line.includes(".scatter")){
+        if (line.includes(".scatter")) {
             return "exploration";
         }
-
 
         // sklearn.cluster: Clustering
         // classes
-        if(line.includes("AffinityPropagation")){
+        if (line.includes("AffinityPropagation")) {
             return "exploration";
         }
-        if(line.includes("AgglomerativeClustering")){
+        if (line.includes("AgglomerativeClustering")) {
             return "exploration";
         }
-        if(line.includes("Birch")){
+        if (line.includes("Birch")) {
             return "exploration";
         }
-        if(line.includes("DBSCAN")){
+        if (line.includes("DBSCAN")) {
             return "exploration";
         }
-        if(line.includes("FeatureAgglomeration")){
+        if (line.includes("FeatureAgglomeration")) {
             return "exploration";
         }
-        if(line.includes("KMeans")){
+        if (line.includes("KMeans")) {
             return "exploration";
         }
-        if(line.includes("MiniBatchKMeans")){
+        if (line.includes("MiniBatchKMeans")) {
             return "exploration";
         }
-        if(line.includes("MeanShift")){
+        if (line.includes("MeanShift")) {
             return "exploration";
         }
-        if(line.includes("OPTICS")){
+        if (line.includes("OPTICS")) {
             return "exploration";
         }
-        if(line.includes("SpectralClustering")){
+        if (line.includes("SpectralClustering")) {
             return "exploration";
         }
-        if(line.includes("SpectralBiclustering")){
+        if (line.includes("SpectralBiclustering")) {
             return "exploration";
         }
-        if(line.includes("SpectralCoclustering")){
+        if (line.includes("SpectralCoclustering")) {
             return "exploration";
         }
         // functions
-        if(line.includes("affinity_propagation")){
+        if (line.includes("affinity_propagation")) {
             return "exploration";
         }
-        if(line.includes("cluster_optics_dbscan")){
+        if (line.includes("cluster_optics_dbscan")) {
             return "exploration";
         }
-        if(line.includes("cluster_optics_xi")){
+        if (line.includes("cluster_optics_xi")) {
             return "exploration";
         }
-        if(line.includes("compute_optics_graph")){
+        if (line.includes("compute_optics_graph")) {
             return "exploration";
         }
-        if(line.includes("dbscan")){
+        if (line.includes("dbscan")) {
             return "exploration";
         }
-        if(line.includes("estimate_bandwidth")){
+        if (line.includes("estimate_bandwidth")) {
             return "exploration";
         }
-        if(line.includes("k_means")){
+        if (line.includes("k_means")) {
             return "exploration";
         }
-        if(line.includes("kmeans_plusplus")){
+        if (line.includes("kmeans_plusplus")) {
             return "exploration";
         }
-        if(line.includes("mean_shift")){
+        if (line.includes("mean_shift")) {
             return "exploration";
         }
-        if(line.includes("spectral_clustering")){
+        if (line.includes("spectral_clustering")) {
             return "exploration";
         }
-        if(line.includes("ward_tree")){
+        if (line.includes("ward_tree")) {
             return "exploration";
         }
 
         // sklearn.compose: Composite Estimators
-        if(line.includes("ColumnTransformer")){
+        if (line.includes("ColumnTransformer")) {
             return "exploration";
         }
-        if(line.includes("TransformedTargetRegressor")){
+        if (line.includes("TransformedTargetRegressor")) {
             return "training";
         }
-        if(line.includes("make_column_transformer")){
+        if (line.includes("make_column_transformer")) {
             return "exploration";
         }
-        if(line.includes("make_column_selector")){
+        if (line.includes("make_column_selector")) {
             return "exploration";
         }
 
@@ -1210,12 +1205,8 @@ module.exports = {
         if (line.includes(".run_eagerly")) {
             return "training";
         }
-        // if (line.includes(".save")) {
-        //     return "training";
-        // }
-        // if (line.includes(".save_model")) {
-        //     return "training";
-        // }
+        // API: save
+        // API: save_model
         if (line.includes(".load_model")) {
             return "training";
         }
@@ -1225,9 +1216,7 @@ module.exports = {
         if (line.includes(".set_weights")) {
             return "training";
         }
-        // if (line.includes(".save_weights")) {
-        //     return "training";
-        // }
+        // API: save_weights
         if (line.includes(".load_weights")) {
             return "training";
         }
@@ -1295,84 +1284,32 @@ module.exports = {
         if (line.includes(".exponential")) {
             return "training";
         }
-        // if (line.includes("RandomNormal")) {
-        //     return "training";
-        // }
-        // if (line.includes("random_normal")) {
-        //     return "training";
-        // }
-        // if (line.includes("RandomUniform")) {
-        //     return "training";
-        // }
-        // if (line.includes("random_uniform")) {
-        //     return "training";
-        // }
-        // if (line.includes("TruncatedNormal")) {
-        //     return "training";
-        // }
-        // if (line.includes("truncated_normal")) {
-        //     return "training";
-        // }
-        // if (line.includes("Zeros")) {
-        //     return "training";
-        // }
-        // if (line.includes("zeros")) {
-        //     return "training";
-        // }
-        // if (line.includes("Ones")) {
-        //     return "training";
-        // }
-        // if (line.includes("ones")) {
-        //     return "training";
-        // }
-        // if (line.includes("GlorotNormal")) {
-        //     return "training";
-        // }
-        // if (line.includes("glorot_normal")) {
-        //     return "training";
-        // }
-        // if (line.includes("GlorotUniform")) {
-        //     return "training";
-        // }
-        // if (line.includes("glorot_uniform")) {
-        //     return "training";
-        // }
-        // if (line.includes("HeNormal")) {
-        //     return "training";
-        // }
-        // if (line.includes("he_normal")) {
-        //     return "training";
-        // }
-        // if (line.includes("HeUniform")) {
-        //     return "training";
-        // }
-        // if (line.includes("he_uniform")) {
-        //     return "training";
-        // }
-        // if (line.includes("Identity")) {
-        //     return "training";
-        // }
-        // if (line.includes(".identity")) {
-        //     return "training";
-        // }
-        // if (line.includes("Orthogonal")) {
-        //     return "training";
-        // }
-        // if (line.includes(".orthogonal")) {
-        //     return "training";
-        // }
-        // if (line.includes("Constant")) {
-        //     return "training";
-        // }
-        // if (line.includes(".constant")) {
-        //     return "training";
-        // }
-        // if (line.includes("VarianceScaling")) {
-        //     return "training";
-        // }
-        // if (line.includes("variance_scaling")) {
-        //     return "training";
-        // }
+        // API: RandomNormal
+        // API: random_normal
+        // API: RandomUniform
+        // API: random_uniform
+        // API: TruncatedNormal
+        // API: truncated_normal
+        // API: Zeros
+        // API: zeros
+        // API: Ones
+        // API: ones
+        // API: GlorotNormal
+        // API: glorot_normal
+        // API: GlorotUniform
+        // API: glorot_uniform
+        // API: HeNormal
+        // API: he_normal
+        // API: HeUniform
+        // API: he_uniform
+        // API: Identity
+        // API: identity
+        // API: Orthogonal
+        // API: orthogonal
+        // API: Constant
+        // API: constant
+        // API: VarianceScaling
+        // API: variance_scaling
         if (line.includes("L1")) {
             return "training";
         }
@@ -1382,33 +1319,15 @@ module.exports = {
         if (line.includes("L1L2")) {
             return "training";
         }
-        // if (line.includes("MaxNorm")) {
-        //     return "training";
-        // }
-        // if (line.includes("max_norm")) {
-        //     return "training";
-        // }
-        // if (line.includes("MinMaxNorm")) {
-        //     return "training";
-        // }
-        // if (line.includes("min_max_norm")) {
-        //     return "training";
-        // }
-        // if (line.includes("NonNeg")) {
-        //     return "training";
-        // }
-        // if (line.includes("non_neg")) {
-        //     return "training";
-        // }
-        // if (line.includes("UnitNorm")) {
-        //     return "training";
-        // }
-        // if (line.includes("unit_norm")) {
-        //     return "training";
-        // }
-        // if (line.includes("RadialConstraint")) {
-        //     return "training";
-        // }
+        // API: MaxNorm
+        // API: max_norm
+        // API: MinMaxNorm
+        // API: min_max_norm
+        // API: NonNeg
+        // API: non_neg
+        // API: UnitNorm
+        // API: unit_norm
+        // API: RadialConstraint
         if (line.includes("Input(")) {
             return "training";
         }
@@ -2112,8 +2031,6 @@ module.exports = {
             return "training";
         }
 
-
-
         // pandas lib
         if(line.includes("read_csv")){
             return "data collection";
@@ -2136,10 +2053,6 @@ module.exports = {
         if(line.includes("read_clipboard")){
             return "data collection";
         }
-        // if(line.includes("DataFrame")){
-        //     return "data collection";
-        // }
-
         if(line.includes(".reindex")){
             return "wrangling";
         }
@@ -2203,7 +2116,6 @@ module.exports = {
         if(line.includes(".assign")){
             return "wrangling";
         }
-
         if(line.includes(".shape")){
             return "exploration";
         }
@@ -2240,14 +2152,12 @@ module.exports = {
         if(line.includes("quarter_plot")) {
             return "exploration";
         }
-
         if(line.includes(".drop")){
             if ((!line.includes("=")) && (!line.includes("return"))) {
                 return "exploration";
             }
             return "wrangling";
         }
-
         if(line.includes(".iloc")){
             if ((!line.includes("=")) && (!line.includes("return"))) {
                 return "exploration";
@@ -2260,30 +2170,21 @@ module.exports = {
             }
             return "wrangling";
         }
-
         if (line.includes("pickle.load")) {
             return "data collection";
         }
-
         if (line.slice(0,5) == "print") {
             return "exploration";
         }
-
         if (line.slice(0,5) == "list(") {
             return "exploration";
         }
-
         if (line.slice(0,4) == "len(") {
             return "exploration";
         }
-
         if((!line.includes("=")) && (!line.includes(".")) && (!line.includes("return")) && (!line.includes("(")) && (!line.includes(")"))) {
             return "exploration";
         }
-        // if((!line.includes("=")) && (!line.includes(".")) && (!line.includes(" ")) && (!line.includes("return")) && (!line.includes("(")) && (!line.includes(")"))) {
-        //     return "exploration";
-        // }
-
         return "";
     }
 }

@@ -93,41 +93,6 @@ def label_output(filename):
         if (not (line in colors)):
             colors[line] = {'lightgrey'}
 
-    def find_ancestors(cell, parents):
-        cur_parents = parents[cell]
-        seen = set()
-        while (len(cur_parents) != 0):
-            new_parents = set()
-            for p in cur_parents:
-                new_parents.add(p)
-            for parent in cur_parents:
-                if parent in seen:
-                    new_parents.remove(parent)
-                    continue
-                seen.add(parent)
-                new_parents.remove(parent)
-                new_parents = new_parents.union(parents[parent])
-            cur_parents = new_parents
-        return seen
-
-    def colors_ok(u, v):
-        u_colors = colors[u]
-        v_colors = colors[v]
-        if u_colors == {'lightgrey'} or u_colors == {'lightblue'} or u_colors == {'lightgrey', 'lightblue'}:
-            return True
-        if v_colors == {'lightgrey'} or v_colors == {'lightblue'} or v_colors == {'lightgrey', 'lightblue'}:
-            return True
-        symm_diff = u_colors.symmetric_difference(v_colors)
-        if len(symm_diff) == 0 or symm_diff == {'lightgrey'} or symm_diff == {'lightblue'} or symm_diff == {'lightgrey', 'lightblue'}:
-            return True
-        return False
-
-    def greater(i, l):
-        for j in l:
-            if i < j:
-                return False
-        return True
-
     prop_colors = defaultdict(set)
     for k in colors:
         prop_colors[k] = colors[k]

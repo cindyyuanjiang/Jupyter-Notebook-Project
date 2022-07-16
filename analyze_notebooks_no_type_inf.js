@@ -16,13 +16,13 @@ fs.readdirSync(path).forEach(file => {
     if (getExt(file) === "ipynb"){
         totalNotebookCount += 1;
         try {
-            line_dep.calculateCells(path + file, printMode);
+            line_dep.calculateCellsNoTypeInf(path + file, printMode);
             notebookCount += 1;
         } catch(err) {
             // comment out for measuring performance
-            // console.log("Error occured: " + err.message);
+            console.log("Error occured: " + err.message);
             var name = path + file;
-            fs.writeFile(name.substring(0, name.lastIndexOf('.')) + '_new_labels.txt', "", function (err) {
+            fs.writeFile(name.substring(0, name.lastIndexOf('.')) + '_new_labels_no_type_inf.txt', "", function (err) {
               if (err) throw err;
             });
         }

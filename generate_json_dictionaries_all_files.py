@@ -11,6 +11,8 @@ for file in os.listdir(directory):
     filename = os.fsdecode(file)
     if filename.endswith("_no_comments.py"):
         num_python_files += 1
+        # fix filename with blank space
+        filename = filename.replace(' ', '\ ')
         command = "/Users/cindyjiang/Desktop/pyright/packages/pyright/index.js --lib " + directory_in_str + filename
         os.system(command)
 end_time = time.time()
