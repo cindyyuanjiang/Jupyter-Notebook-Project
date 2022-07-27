@@ -1,33 +1,39 @@
 # Jupyter-Notebook-Project
 
-## Scripts
+## Part 1: Scripts
 
-**Converting Jupyter notebooks to python files**
+The followings are all scripts contained in this folder:
 
-generate_python_files_from_nbs.js
+**1. generate_python_files_from_nbs.js**
 
 This file takes in a folder path in command line, and generates a python file for each notebook in the folder and saves the python file in the same folder.
 
-**Generating type inference information from python files**
+Example usage: “node generate_python_files_from_nbs.js folder_name”
 
-generate_json_dictionaries.py
+**2. generate_json_dictionaries_all_files.py**
 
-This file takes in a folder path in command line, and generates the type inference information for each python file in the folder and saves the generated json file in the same folder.
+This file takes in a folder path in command line, and generates the type inference information for each python file in the folder and saves the information as a json file in the same folder.
 
-**Performing static analysis to generate data dependencies and labeling library API calls**
+Example usage: “python generate_json_dictionaries_all_files.py folder_name”
 
-analyze_notebooks.js
+**3. analyze_notebooks.js**
 
-This file takes in a folder path in command line, it genrates the data dependency and initial API call labelings for each notebook and saves the information in a txt file.
+This file takes in a folder path in command line, and generates the data dependency information and seed API call labelings for each notebook in the folder and saves the information as a text file in the same folder.
 
-**Performing propogation algorithm and generating data dependency graphs with cell label annotation**
+Example usage: “node analyze_notebooks.js folder_name”
+
+**4. generate_graphs_cell_level.py**
 
 generate_graphs_cell_level.py
 
-This file takes in a folder path in command line, it performs the propagation algorithm for each notebook and analysis file from the previous result, and outputs the data dependency graph with cell labelings.
+This file takes in a folder path in command line, and performs the propagation algorithm for each notebook using results from “analyze_notebooks.js” and outputs the labeled data dependency graph as a pdf file in the same folder.
 
-**Report analysis on changes between versions of notebooks**
+Example usage: “python generate_graphs_cell_level.py folder_name”
 
-run_versions.py
+## Part 2: Manually Labeled Notebooks Data
 
-This file takes in a notebook name and a starting and ending version numbers. It performs analysis on the changes from notebook version to version and outputs the analysis report.
+In the “notebook sample” folder, there are 50 notebooks used for the paper’s accuracy measurement. Their corresponding manual labelings are in file “Manual Notebook Labelings.xlsx”.
+
+## Part 3: Supporting Tools
+
+We used two off-the-shelve tools in our project - "python-program-analysis" and "pyright". We modified their source code, which can be found at https://tinyurl.com/2p8uw4vv.
