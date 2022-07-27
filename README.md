@@ -32,7 +32,7 @@ Example usage: “python generate_graphs_cell_level.py folder_name”
 
 ## Part 2: Manually Labeled Notebooks Data
 
-In the “notebook sample” folder at https://tinyurl.com/2p8uw4vv, there are 50 notebooks used for the paper’s accuracy measurement. Their corresponding manual labelings are in file “Manual Notebook Labelings.xlsx”.
+In the “notebook sample” folder, there are 50 notebooks used for the paper’s accuracy measurement. Their corresponding manual labelings are in file “Manual Notebook Labelings.xlsx”.
 
 ## Part 3: Supporting Tools
 
